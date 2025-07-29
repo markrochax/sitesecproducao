@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secretaria de Abastecimento - Jutaí</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #2a6b3e;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+    nav {
+      background-color: #4caf50;
+      padding: 0.5em;
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    section {
+      padding: 1.5em;
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    .hidden {
+      display: none;
+    }
+    .login-form {
+      max-width: 300px;
+      margin: 0 auto;
+      background: white;
+      padding: 1em;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 0.5em;
+      margin: 0.5em 0;
+    }
+    button {
+      padding: 0.5em 1em;
+      background-color: #2a6b3e;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .admin-panel {
+      background: white;
+      padding: 1em;
+      margin-top: 1em;
+    }
+    #carousel {
+      background: white;
+      padding: 1em;
+      margin: 1em 0;
+      border-left: 5px solid #2a6b3e;
+      font-weight: bold;
+    }
+    .cta-button {
+      display: inline-block;
+      margin-top: 1em;
+      padding: 0.7em 1.2em;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusted for better responsiveness */
+      gap: 10px;
+      margin-top: 1em;
+    }
+    .galeria img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      border-radius: 5px;
+    }
+    .galeria img:hover {
+      transform: scale(1.5);
+      z-index: 2;
+      position: relative;
+    }
+
+    .fruit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted for better responsiveness */
+      gap: 20px;
+      justify-items: center;
+      margin-top: 20px;
+    }
+    .fruit-card {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      max-width: 250px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .fruit-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      image-rendering: auto;
+      image-rendering: crisp-edges;
+    }
+    
+    .fruit-card h4 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+      color: #2a6b3e;
+    }
+    .fruit-card p {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    /* --- Novas Regras CSS para a Seção de Projetos --- */
+    .projeto-container {
+        margin-bottom: 25px; /* Aumenta o espaçamento entre os projetos */
+        background-color: white; /* Fundo branco para cada cartão de projeto */
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08); /* Sombra mais suave */
+        overflow: hidden; /* Garante que as bordas arredondadas funcionem */
+    }
+
+    .projeto-nome {
+        padding: 15px; /* Espaçamento interno para o título */
+        margin: 0;
+        font-size: 22px; /* Tamanho maior para o título */
+        color: #2a6b3e;
+        text-align: center;
+        background-color: #e8f5e9; /* Fundo leve para o título */
+        border-bottom: 1px solid #dcdcdc; /* Linha sutil abaixo do título */
+    }
+
+    .projeto-imagem-container {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        /* max-width: 800px; */ /* Removido para a imagem ocupar a largura total do container */
+    }
+
+    .projeto-thumbnail {
+        display: block;
+        width: 100%;
+        aspect-ratio: 6 / 2; /* Proporção 6:2 */
+        object-fit: cover;
+        border-radius: 0; /* Removendo bordas arredondadas da imagem, pois o container já as tem */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .projeto-thumbnail:hover {
+        transform: scale(1.03); /* Efeito de zoom mais suave no hover */
+    }
+
+    .projeto-detalhes {
+        display: none; /* Inicialmente escondido */
+        padding: 20px; /* Mais espaçamento interno */
+        text-align: justify; /* Texto justificado */
+        line-height: 1.6; /* Espaçamento entre linhas */
+        color: #333;
+    }
+
+    /* Quando o contêiner do projeto está expandido, mostre os detalhes */
+    .projeto-container.expanded .projeto-detalhes {
+        display: block;
+    }
+
+    /* Responsividade para a seção de projetos */
+    @media (max-width: 768px) {
+        .projeto-nome {
+            font-size: 18px;
+        }
+        .projeto-detalhes {
+            padding: 15px;
+            font-size: 14px;
+        }
+    }
+    @media (max-width: 480px) {
+        .projeto-container {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Secretaria de Abastecimento e Produção - Jutaí</h1>
+</header>
+
+<nav>
+  <a onclick="showSection('inicio')">Início</a>
+  <a onclick="showSection('projetos')">Projetos</a>
+  <a onclick="showSection('frutas')">Plantas e Frutas</a>
+  <a onclick="showSection('contato')">Contato</a>
+</nav>
+
+<section id="inicio" class="active">
+    <div id="carousel">
+     <p id="highlight">Feira da Agricultura Familiar - Edição Agosto</p>
+  </div>
+  <h2>🌿 Bem-vindo à Secretaria de Abastecimento e Produção de Jutaí</h2>
+  <p>A secretaria promove ações que fortalecem a agricultura familiar, extrativismo e economia local.</p>
+
+  <h3>🎯 Nossa Missão</h3>
+  <p>Executar políticas públicas para agricultores, ribeirinhos e comunidades tradicionais.</p>
+
+  <div class="galeria">
+    <img src="foto1.jpg" alt="Agricultores em Jutaí">
+    <img src="foto2.jpg" alt="Campo de cultivo em Jutaí">
+    <img src="foto3.jpg" alt="Colheita de produtos agrícolas">
+    <img src="foto4.jpg" alt="Mercado local de Jutaí">
+    <img src="foto5.jpg" alt="Comunidade ribeirinha em Jutaí">
+    <img src="foto6.jpg" alt="Produtos da agricultura familiar">
+  </div>
+
+  <h3>👁️ Visão</h3>
+  <p>Ser modelo de desenvolvimento rural sustentável na Amazônia.</p>
+
+  <h3>📞 Precisa de ajuda?</h3>
+  <a onclick="showSection('contato')" class="cta-button">Entre em Contato</a>
+</section>
+
+<section id="projetos">
+  <h2>Projetos em Andamento</h2>
+
+  <div class="projeto-container">
+      <h3 class="projeto-nome">Construção e Implementação da Casa de Farinha</h3>
+      <div class="projeto-imagem-container">
+          <img src="projetos/casadeFarinha.jpeg" alt="Feira da Agricultura Familiar" class="projeto-thumbnail">
+          <div class="projeto-detalhes">
+              <p>Este projeto visa a construção e implementação de uma casa de farinha moderna e equipada em Jutaí/AM. Nosso objetivo é fortalecer a cadeia produtiva da mandioca, um dos pilares da agricultura familiar local, oferecendo aos produtores um espaço adequado, higiênico e eficiente para o processamento da mandioca em farinha, goma e outros derivados.</p>
+          </div>
+      </div>
+  </div>
+
+  <div class="projeto-container">
+      <h3 class="projeto-nome">Programa de Apoio ao Pequeno Produtor</h3>
+      <div class="projeto-imagem-container">
+          <img src="projetos/apoioPequenoprodutor.jpeg" alt="Programa de Apoio ao Pequeno Produtor" class="projeto-thumbnail">
+          <div class="projeto-detalhes">
+              <p>Nosso programa de apoio ao pequeno produtor oferece assistência técnica especializada, capacitação e acesso a recursos para melhorar a produção e a gestão das propriedades rurais. Buscamos fortalecer a agricultura em pequena escala, otimizar o uso da terra, fomentar a inovação e, consequentemente, gerar renda e melhorar a qualidade de vida das famílias do campo em Jutaí.</p>
+          </div>
+      </div>
+  </div>
+
+  <div class="projeto-container">
+      <h3 class="projeto-nome">Implementação da Piscicultura Sustentável</h3>
+      <div class="projeto-imagem-container">
+          <img src="projetos/psicultura.jpeg" alt="Distribuição de Sementes Nativas" class="projeto-thumbnail">
+          <div class="projeto-detalhes">
+              <p>O projeto de Implementação da Piscicultura Sustentável na comunidade de [Nome da Comunidade/Localidade], em Jutaí/AM, visa diversificar a produção local e promover uma nova fonte de renda e alimento para as famílias. Reconhecendo o vasto potencial hídrico da região amazônica, esta iniciativa busca otimizar o uso dos recursos naturais de forma responsável, contribuindo para o desenvolvimento socioeconômico e ambiental.</p>
+          </div>
+      </div>
+  </div>
+  <div class="projeto-container">
+      <h3 class="projeto-nome"> Abastecimento de Alimentos da Agricultura Familiar para Escolas de Jutaí</h3>
+      <div class="projeto-imagem-container">
+          <img src="projetos/escolas.jpeg" alt="Programa de Apoio ao Pequeno Produtor" class="projeto-thumbnail">
+          <div class="projeto-detalhes">
+              <p>Este projeto essencial foca em garantir o abastecimento de alimentos frescos, saudáveis e de alta qualidade da agricultura familiar para as escolas da rede pública municipal de Jutaí/AM. Alinhado com as diretrizes do Programa Nacional de Alimentação Escolar (PNAE), nossa iniciativa visa não apenas nutrir os estudantes, mas também fortalecer a economia local e promover a sustentabilidade.</p>          </div>
+      </div>
+  </div>
+ 
+
+</section>
+
+<section id="frutas">
+  <h2>Plantas e Frutas Regionais</h2>
+  <p>Frutas da Amazônia com alto valor cultural e nutritivo:</p>
+
+  <div class="fruit-grid">
+    <div class="fruit-card">
+      <img src="frutaseplantas/banana.jpeg" alt="Banana Pacovã">
+      <h4>Banana Pacovã</h4>
+      <p>Usada em pratos típicos e frituras. Rica em potássio.</p>
+      <p><strong>Época:</strong> Fevereiro a Junho.</p>
+    </div>
+
+    <div class="fruit-card">
+      <img src="frutaseplantas/acai.jpg" alt="Açaí">
+      <h4>Açaí</h4>
+      <p>Base da alimentação ribeirinha, energético e antioxidante.</p>
+      <p><strong>Época:</strong> Agosto a Dezembro.</p>
+    </div>
+
+    <div class="fruit-card">
+      <img src="frutaseplantas/cupu.jpg" alt="Cupuaçu">
+      <h4>Cupuaçu</h4>
+      <p>Usado em doces, sucos e cosméticos. Aroma marcante.</p>
+      <p><strong>Época:</strong> Janeiro a Abril.</p>
+    </div>
+    <div class="fruit-card">
+      <img src="frutaseplantas/bacaba.jpg" alt="Bacaba">
+      <h4>Bacaba</h4>
+      <p>Palmeira nativa da Amazônia. Seu fruto dar em cachos que chegam a pesar até 20 quilos. O fruto é muito parecido com o açaí.</p>
+      <p><strong>Época:</strong> Dezembro e Abril.</p>
+    </div>
+    <div class="fruit-card">
+      <img src="frutaseplantas/abui.jpg" alt="Abiu">
+      <h4>Abiu</h4>
+      <p>Fruto do abieiro, possui boa quantidade de fibras, vitaminas e sais minerais.</p>
+      <p><strong>Época:</strong> Abril e Junho.</p>
+    </div>
+    <div class="fruit-card">
+      <img src="frutaseplantas/bacuri.jpg" alt="Bacuri">
+      <h4>Bacuri</h4>
+      <p>O fruto, envolvido em uma casca dura e espessa, vem do bacurizeiro, uma árvore que pode alcançar 25 metros de altura.</p>
+      <p><strong>Época:</strong> Dezembro e Março.</p>
+    </div>
+
+    <div class="fruit-card" style="visibility:hidden;"></div>
+    <div class="fruit-card" style="visibility:hidden;"></div>
+    <div class="fruit-card" style="visibility:hidden;"></div>
+    <div class="fruit-card" style="visibility:hidden;"></div>
+    <div class="fruit-card" style="visibility:hidden;"></div>
+    <div class="fruit-card" style="visibility:hidden;"></div>
+  </div>
+</section>
+
+<section id="contato">
+  <h2>Contato</h2>
+  <p>📧 Email: secretaria@jutai.gov.br</p>
+  <p>📞 Telefone: (97) 98442-2197</p>
+  <p>📍 Endereço: Rua da Ubada, Sao Francisco - Jutaí/AM</p>
+</section>
+
+<script>
+  // Função para mostrar a seção e salvar no localStorage
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => {
+      sec.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+    // Salva o ID da seção ativa no armazenamento local
+    localStorage.setItem('lastActiveSection', id);
+  }
+
+  // --- Função de Login (oculta do HTML) ---
+  function login() {
+    const user = document.getElementById('user').value;
+    const pass = document.getElementById('pass').value;
+    if (user === 'admin' && pass === '1234') {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('adminPanel').classList.remove('hidden');
+    } else {
+      alert("Usuário ou senha incorretos.");
+    }
+  }
+
+  // --- Carrossel de Destaques ---
+  const destaques = [
+    "Feira da Agricultura Familiar - Edição Agosto",
+    "Nova parceria com cooperativas locais",
+    "Oficinas de compostagem em comunidades rurais",
+    "Entrega de kits agrícolas para pequenos produtores"
+  ];
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % destaques.length;
+    document.getElementById("highlight").innerText = destaques[index];
+  }, 4000);
+
+  // --- Lógica para expandir Projetos ---
+  document.addEventListener('DOMContentLoaded', function() {
+    const projetoContainers = document.querySelectorAll('.projeto-container');
+
+    projetoContainers.forEach(container => {
+        const imagemContainer = container.querySelector('.projeto-imagem-container');
+        imagemContainer.addEventListener('click', function() {
+            container.classList.toggle('expanded');
+        });
+    });
+
+    // --- Nova Lógica para Manter a Aba Ativa Após Recarregar a Página ---
+    const lastActiveSectionId = localStorage.getItem('lastActiveSection');
+    if (lastActiveSectionId) {
+      // Se houver uma seção salva, mostra-a
+      showSection(lastActiveSectionId);
+    } else {
+      // Caso contrário (primeira visita ou nada salvo), mostra a seção 'inicio'
+      showSection('inicio');
+    }
+  });
+</script>
+
+</body>
+</html>
